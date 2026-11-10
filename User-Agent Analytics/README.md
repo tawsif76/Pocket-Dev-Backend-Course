@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5000/analytics](http://localhost:5000/analytics). Internet access is required to load Chart.js from its CDN.
+Open [http://localhost:5000/analytics](http://localhost:5000/analytics).
 
 ## Routes
 
