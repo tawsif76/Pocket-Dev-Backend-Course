@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User-Agent Analytics</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>User-Agent Analytics</h1>
+  <a href="/analytics/report.csv">Download CSV report</a>
+  <p id="status" role="status">Loading analytics...</p>
+
+  <div>
+    <canvas
+      id="userAgentChart"
+      role="img"
+      aria-label="Bar chart showing requests by user-agent"
+    ></canvas>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+
+  <script>
+    async function loadChart() {
+      const status = document.getElementById('status');
+
+      try {
+        const response = await fetch('/analytics/user-agents');
+
+        if (!response.ok) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+
+        const analytics = await response.json();
+
+        new Chart(document.getElementById('userAgentChart'), {
+          type: 'bar',
+          data: {
+            labels: Object.keys(analytics),
+            datasets: [{
+              label: 'Number of requests',
+              data: Object.values(analytics),
+              backgroundColor: '#3b82f6',
+              borderRadius: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  precision: 0
+                }
+              }
+            }
+          }
+        });
+
+        status.textContent = '';
+      } catch (error) {
+        status.textContent = 'Could not load analytics. Please try again.';
+        console.error(error);
+      }
+    }
+
+    loadChart();
+  </script>
+</body>
+</html>
